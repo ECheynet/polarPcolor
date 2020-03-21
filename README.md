@@ -1,9 +1,8 @@
 # polarPcolor
 polarPcolor draws a pseudocolor plot in polar coordinates with a polar grid.
+[![View pcolor in polar coordinates on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://se.mathworks.com/matlabcentral/fileexchange/49040-pcolor-in-polar-coordinates)
 
-
-
-polarPcolor aims to represent a pseudocolour plot in polar coordinates, with a radial grid to allow a clear visualization of the data. It is well suited for Plan Position Indicator (PPI) scan for radar or lidar for example [1]. A similar function is available in ref. [2], which propose a visualization in 3D.
+polarPcolor aims to represent a pseudocolour plot in polar coordinates, with a radial grid to allow clear visualization of the data. It is well suited for Plan Position Indicator (PPI) scan for radar or lidar for example [1]. A similar function is available in ref. [2], which propose a visualization in 3D.
 
 References:
 
