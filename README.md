@@ -1,4 +1,4 @@
-# polarPcolor
+# pcolor in polar coordinates
 polarPcolor draws a pseudocolor plot in polar coordinates with a polar grid.
 
 [![View pcolor in polar coordinates on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://se.mathworks.com/matlabcentral/fileexchange/49040-pcolor-in-polar-coordinates)
