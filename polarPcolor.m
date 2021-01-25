@@ -69,6 +69,7 @@ p.addOptional('colBar',1);
 p.addOptional('Rscale','linear');
 p.addOptional('colormap','parula');
 p.addOptional('ncolor',[]);
+p.addOptional('typeRose','meteo'); % 'meteo' or 'default'
 p.addOptional('circlesPos',[]);
 p.parse(varargin{:});
 
@@ -82,6 +83,8 @@ autoOrigin = p.Results.autoOrigin ;
 myColorMap = p.Results.colormap ;
 ncolor = p.Results.ncolor ;
 circPos = p.Results.circlesPos ;
+typeRose = p.Results.typeRose ;
+
 
 if ~isempty(circPos)
     Origin = max([min(circPos),min(R)]);
@@ -193,8 +196,16 @@ end
         end
         contourD = abs((circleMesh - circleMesh(1))/Rrange+R(1)/Rrange);
         
-        cost = cosd(90-spokeMesh); % the zero angle is aligned with North
-        sint = sind(90-spokeMesh); % the zero angle is aligned with North
+        if strcmpi(typeRose,'meteo')
+            cost = cosd(90-spokeMesh); % the zero angle is aligned with North
+            sint = sind(90-spokeMesh); % the zero angle is aligned with North
+        elseif strcmpi(typeRose,'default')
+            cost = cosd(spokeMesh); % the zero angle is aligned with east
+            sint = sind(spokeMesh); % the zero angle is aligned with east
+        else
+            error('"type" must be "meteo" or "default" ');
+        end
+        
         for kk = 1:Nspokes
             
             X = cost(kk)*contourD;
@@ -255,7 +266,19 @@ end
         
 
         % define the grid in polar coordinates
-        angleGrid = linspace(90-thetaMin,90-thetaMax,100);
+        
+        
+        if strcmpi(typeRose,'meteo')
+            angleGrid = linspace(90-thetaMin,90-thetaMax,100);
+        elseif strcmpi(typeRose,'default')
+            angleGrid = linspace(thetaMin,thetaMax,100);
+        else
+            error('"type" must be "meteo" or "default" ');
+        end
+        
+        
+        
+        
         xGrid = cosd(angleGrid);
         yGrid = sind(angleGrid);
         
@@ -272,6 +295,10 @@ end
             
             position = 0.51.*(spokeMesh(min(Nspokes,round(Ncircles/2)))+...
                 spokeMesh(min(Nspokes,1+round(Ncircles/2))));
+        
+            if strcmpi(typeRose,'meteo'),position = 90-position; end
+            
+            
             
             if isempty(RtickLabel),
                 rtick = num2str(tickMesh(kk),2);
@@ -280,28 +307,28 @@ end
             end
             if abs(round(position)) ==90,
                 % radial graduations
-                text((contourD(kk)).*cosd(90-position),...
-                    (0.1+contourD(kk)).*sind(86-position),...
+                text((contourD(kk)).*cosd(position),...
+                    (0.1+contourD(kk)).*sind(position-4),...
                     rtick,'verticalalignment','BaseLine',...
                     'horizontalAlignment', 'center',...
                     'handlevisibility','off','parent',cax);
                 % annotate spokes
-                text(contourD(end).*0.6.*cosd(90-position),...
-                    0.07+contourD(end).*0.6.*sind(90-position),...
+                text(contourD(end).*0.6.*cosd(position),...
+                    0.07+contourD(end).*0.6.*sind(position),...
                     [labelR],'verticalalignment','bottom',...
                     'horizontalAlignment', 'right',...
                     'handlevisibility','off','parent',cax);
             else
                 % radial graduations
-               text((contourD(kk)).*cosd(90-position),...
-                    (contourD(kk)).*sind(90-position),...
+               text((contourD(kk)).*cosd(position),...
+                    (contourD(kk)).*sind(position),...
                     rtick,'verticalalignment','BaseLine',...
                     'horizontalAlignment', 'right',...
                     'handlevisibility','off','parent',cax);
 
                 % annotate spokes
-                text(contourD(end).*0.6.*cosd(90-position),...
-                    contourD(end).*0.6.*sind(90-position),...
+                text(contourD(end).*0.6.*cosd(position),...
+                    contourD(end).*0.6.*sind(position),...
                     [labelR],'verticalalignment','bottom',...
                     'horizontalAlignment', 'right',...
                     'handlevisibility','off','parent',cax);
