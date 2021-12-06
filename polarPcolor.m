@@ -1,30 +1,30 @@
 
 function [varargout] = polarPcolor(R,theta,Z,varargin)
-% [h,c] = polarPcolor1(R,theta,Z,varargin) is a pseudocolor plot of matrix 
-% Z for a vector radius R and a vector angle theta. 
-% The elements of Z specify the color in each cell of the 
-% plot. The goal is to apply pcolor function with a polar grid, which 
+% [h,c] = polarPcolor1(R,theta,Z,varargin) is a pseudocolor plot of matrix
+% Z for a vector radius R and a vector angle theta.
+% The elements of Z specify the color in each cell of the
+% plot. The goal is to apply pcolor function with a polar grid, which
 % provides a better visualization than a cartesian grid.
 %
 %% Syntax
-% 
+%
 % [h,c] = polarPcolor(R,theta,Z)
 % [h,c] = polarPcolor(R,theta,Z,'Ncircles',10)
 % [h,c] = polarPcolor(R,theta,Z,'Nspokes',5)
-% [h,c] = polarPcolor(R,theta,Z,'Nspokes',5,'colBar',0) 
+% [h,c] = polarPcolor(R,theta,Z,'Nspokes',5,'colBar',0)
 % [h,c] = polarPcolor(R,theta,Z,'Nspokes',5,'labelR','r (km)')
-% 
+%
 % INPUT
 %	* R :
 %        - type: float
 %        - size: [1 x Nrr ] where Nrr = numel(R).
 %        - dimension: radial distance.
-%	* theta : 
+%	* theta :
 %        - type: float
 %        - size: [1 x Ntheta ] where Ntheta = numel(theta).
 %        - dimension: azimuth or elevation angle (deg).
 %        - N.B.: The zero is defined with respect to the North.
-%	* Z : 
+%	* Z :
 %        - type: float
 %        - size: [Ntheta x Nrr]
 %        - dimension: user's defined .
@@ -40,13 +40,13 @@ function [varargout] = polarPcolor(R,theta,Z,varargin)
 %        - ncolor: Number of colors in the colorbar and pcolor
 %        - circlesPos: position of the circles with respect to the origin
 %        (it overwrites Ncircles if necessary)
-% 
-% 
+%
+%
 % OUTPUT
 % h: returns a handle to a SURFACE object.
 % c: returns a handle to a COLORBAR object.
 %
-%% Examples 
+%% Examples
 % R = linspace(3,10,100);
 % theta = linspace(0,180,360);
 % Z = linspace(0,10,360)'*linspace(0,10,100);
@@ -56,7 +56,7 @@ function [varargout] = polarPcolor(R,theta,Z,varargin)
 %% Author
 % Etienne Cheynet, University of Stavanger, Norway. 23/10/2019
 % see also pcolor
-% 
+%
 %%  InputParseer
 p = inputParser();
 p.CaseSensitive = false;
@@ -100,21 +100,17 @@ if Origin==0 && strcmpi(Rscale,'log')
 end
 if isempty(circPos)
     if ~isempty(RtickLabel)
-        if numel(RtickLabel)~=Ncircles 
+        if numel(RtickLabel)~=Ncircles
             error(' The radial ticklabel must be equal to Ncircles');
         end
         if any(cellfun(@ischar,RtickLabel)==0)
             error(' The radial ticklabel must be a cell array of characters');
         end
-    end   
+    end
 end
 if ~isempty(circPos)
     circPos = unique([min(R),circPos,max(R)]);
 end
-
-
-
-
 %% Preliminary checks
 % case where dimension is reversed
 Nrr = numel(R);
@@ -131,14 +127,10 @@ if ~isequal(size(Z),[Nrr,Noo])
     error(' dimension of Z does not agree with dimension of R and Theta')
 end
 %% data plot
-
-
-
 rMin = min(R);
 rMax = max(R);
 thetaMin=min(theta);
 thetaMax =max(theta);
-
 if strcmpi(typeRose,'meteo')
     theta = theta;
 elseif strcmpi(typeRose,'default')
@@ -276,12 +268,8 @@ end
             error('"type" must be "meteo" or "default" ');
         end
         
-        
-        
-        
         xGrid = cosd(angleGrid);
         yGrid = sind(angleGrid);
-        
         spokeMesh = linspace(thetaMin,thetaMax,Nspokes);
         
         % plot circles
@@ -291,71 +279,77 @@ end
             plot(X,Y,'color',[0.5,0.5,0.5],'linewidth',1);
         end
         % radius tick label
-        for kk=1:Ncircles
-            
-            position = 0.51.*(spokeMesh(min(Nspokes,round(Ncircles/2)))+...
-                spokeMesh(min(Nspokes,1+round(Ncircles/2))));
         
-            if strcmpi(typeRose,'meteo'),position = 90-position; end
-            if strcmpi(typeRose,'default') && min(90-theta)<5,position = 0; end
-            if min(round(theta))==90 && strcmpi(typeRose,'meteo'),  position = 0; end
-            
+        position = 0.51.*(spokeMesh(min(Nspokes,round(Ncircles/2)))+...
+            spokeMesh(min(Nspokes,1+round(Ncircles/2))));
+        if strcmpi(typeRose,'meteo'),position = 90-position; end
+        if strcmpi(typeRose,'default') && min(90-theta)<5,position = 0; end
+        if min(round(theta))==90 && strcmpi(typeRose,'meteo'),  position = 0; end
+        if max(round(theta))==90 && strcmpi(typeRose,'meteo'),  position = 0; end
+        
+        for kk=1:Ncircles
             if isempty(RtickLabel),
                 rtick = num2str(tickMesh(kk),2);
             else
                 rtick = RtickLabel(kk);
             end
-            if abs(round(position)) ==90,
-                % radial graduations
-                t = text((contourD(kk)).*cosd(position),...
-                    (0.1+contourD(kk)).*sind(position-4),...
-                    rtick,'verticalalignment','BaseLine',...
-                    'horizontalAlignment', 'center',...
-                    'handlevisibility','off','parent',cax);
-                % annotate spokes
-                text(contourD(end).*0.6.*cosd(position),...
-                    0.07+contourD(end).*0.6.*sind(position),...
+            
+            % radial graduations
+            t = text(contourD(kk).*cosd(position),...
+                (contourD(kk)).*sind(position),...
+                rtick,'verticalalignment','BaseLine',...
+                'horizontalAlignment', 'right',...
+                'handlevisibility','off','parent',cax);
+            if min(round(abs(90-theta)))<5 && strcmpi(typeRose,'default'),
+                t.Position =  t.Position - [0,0.1,0];
+                t.Interpreter = 'latex';
+                clear t;
+            end
+            if min(round(theta))==90 && strcmpi(typeRose,'meteo')
+                t.Position =  t.Position + [0,0.02,0];
+                t.Interpreter = 'latex';
+                clear t;
+            elseif max(round(theta))==90 && strcmpi(typeRose,'meteo')
+                t.Position =  t.Position - [0,0.05,0];
+                t.Interpreter = 'latex';
+                clear t;
+            end
+            
+            % annotate spokes
+            if max(theta)-min(theta)>180,
+                t = text(contourD(end).*1.3.*cosd(position),...
+                    contourD(end).*1.3.*sind(position),...
                     [labelR],'verticalalignment','bottom',...
                     'horizontalAlignment', 'right',...
                     'handlevisibility','off','parent',cax);
             else
-                % radial graduations
-               t = text(contourD(kk).*cosd(position),...
-                    (contourD(kk)).*sind(position),...
-                    rtick,'verticalalignment','BaseLine',...
-                    'horizontalAlignment', 'right',...
-                    'handlevisibility','off','parent',cax);
-                if min(round(abs(90-theta)))<5 && strcmpi(typeRose,'default'), 
-                    t.Position =  t.Position - [0,0.05,0];
-                    t.Interpreter = 'latex';
-                    clear t; 
-                end
-                if min(round(theta))==90 && strcmpi(typeRose,'meteo'),
-                    t.Position =  t.Position + [0,0.02,0];
-                    t.Interpreter = 'latex';
-                    clear t;
-                end
-                % annotate spokes
                 t = text(contourD(end).*0.6.*cosd(position),...
                     contourD(end).*0.6.*sind(position),...
                     [labelR],'verticalalignment','bottom',...
                     'horizontalAlignment', 'right',...
                     'handlevisibility','off','parent',cax);
-                t.Interpreter = 'latex';
-                if min(round(theta))==90 && strcmpi(typeRose,'meteo'),   t.Position =  t.Position + [0,0.05,0];                clear t; end
-                if min(round(abs(90-theta)))<5 && strcmpi(typeRose,'default'),
-                    t.Position =  t.Position - [0,0.12,0];
-                    t.Interpreter = 'latex';
-                    clear t;
-                end
             end
+            
+            t.Interpreter = 'latex';
+            if min(round(theta))==90 && strcmpi(typeRose,'meteo'),
+                t.Position =  t.Position + [0,0.05,0];
+                clear t;
+            elseif max(round(theta))==90 && strcmpi(typeRose,'meteo'),
+                t.Position =  t.Position + [0,0.05,0];
+                clear t;
+            end
+            %                 if min(round(abs(90-theta)))<5 && strcmpi(typeRose,'default'),
+            %                     t.Position =  t.Position - [0,0.12,0];
+            %                     t.Interpreter = 'latex';
+            %                     clear t;
+            %                 end
         end
         
     end
     function [rNorm] = getRnorm(Rscale,Origin,R,Rrange)
         if strcmpi(Rscale,'linear')||strcmpi(Rscale,'lin')
-                rNorm = R-R(1)+Origin;
-                rNorm = (rNorm)/max(rNorm)*max(R/Rrange);
+            rNorm = R-R(1)+Origin;
+            rNorm = (rNorm)/max(rNorm)*max(R/Rrange);
         elseif strcmpi(Rscale,'log')||strcmpi(Rscale,'logarithmic')
             if rMin<=0
                 error(' The radial vector cannot be lower or equal to 0 if the logarithmic scale is used');
