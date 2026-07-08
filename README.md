@@ -6,7 +6,7 @@ polarPcolor draws a pseudocolor plot in polar coordinates with a polar grid.
 <a href="https://www.buymeacoffee.com/echeynet"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a baguette&emoji=🥖&slug=echeynet&button_colour=FFDD00&font_colour=000000&font_family=Comic&outline_colour=000000&coffee_colour=ffffff" style="height: 30px" /></a>
 
 ## Summary
-polarPcolor aims to represent a pseudocolour plot in polar coordinates, with a radial grid to allow clear visualization of the data. It is well suited for Plan Position Indicator (PPI) scan for radar or lidar for example [1]. A similar function is available in ref. [2], which propose a visualization in 3D.
+polarPcolor aims to represent a pseudocolour plot in polar coordinates, with a radial grid to allow clear visualization of the data. It is well suited for Plan Position Indicator (PPI) scan for radar or lidar for example [1]. A similar function is available in ref. [2], which propose a visualization in 3D. A Python version is available on Github.
 
 ## References
 
